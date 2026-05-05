@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPPB Aarogya HSA — Strategic Proposal Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --surface3: #1e2d42;
+    --border: rgba(99,179,237,0.12);
+    --border-strong: rgba(99,179,237,0.25);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --accent6: #8b5cf6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --gold: #f4c430;
+    --navy: #1e3a5f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .sidebar-logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .sidebar-logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-readiness {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+
+  .readiness-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .readiness-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent3);
+  }
+
+  .readiness-bar {
+    height: 4px;
+    background: var(--surface3);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .readiness-fill {
+    height: 100%;
+    width: 87%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2));
+    border-radius: 2px;
+    animation: fillBar 1.5s ease forwards;
+  }
+
+  @keyframes fillBar { from { width: 0% } }
+
+  nav { padding: 12px 0; flex: 1; }
+
+  .nav-section-label {
+    font-size: 9px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 8px 20px 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text2);
+    border-left: 2px solid transparent;
+    transition: all 0.18s ease;
+    text-decoration: none;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--text);
+    background: var(--surface2);
+    border-left-color: var(--accent);
+  }
+
+  .nav-item .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .nav-badge.green { background: var(--accent3); }
+  .nav-badge.amber { background: var(--accent4); }
+  .nav-badge.red { background: var(--accent5); }
+
+  /* Main content */
+  #main {
+    margin-left: 260px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top bar */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .topbar-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    color: var(--text2);
+  }
+
+  .topbar-save {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .topbar-save:hover { opacity: 0.85; }
+
+  /* Content area */
+  .content { padding: 32px; max-width: 1100px; }
+
+  /* Section */
+  .section {
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+
+  .card-icon { font-size: 22px; margin-bottom: 8px; }
+
+  .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .card-label {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .card-change {
+    font-size: 11px;
+    color: var(--accent3);
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Stakeholder cards */
+  .stakeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .stakeholder-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .stakeholder-card:hover { border-color: var(--border-strong); }
+
+  .stakeholder-header {
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stakeholder-avatar {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .stakeholder-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .stakeholder-role {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .stakeholder-body { padding: 14px 20px; }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .feature-list li {
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .feature-list li::before {
+    content: '→';
+    color: var(--accent2);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Accordion */
+  .accordion {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .accordion-header:hover { background: var(--surface3); }
+
+  .accordion-arrow {
+    margin-left: auto;
+    color: var(--text3);
+    transition: transform 0.25s;
+    font-size: 12px;
+  }
+
+  .accordion.open .accordion-arrow { transform: rotate(90deg); }
+
+  .accordion-body {
+    display: none;
+    padding: 0 20px 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .accordion.open .accordion-body { display: block; }
+
+  .accordion-body p {
+    color: var(--text2);
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  /* Workflow */
+  .workflow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+
+  .workflow-step {
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .workflow-arrow {
+    padding: 0 8px;
+    color: var(--accent2);
+    font-size: 14px;
+  }
+
+  /* Status pill */
+  .status-pill {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .status-pill::before { content: '●'; font-size: 7px; }
+
+  .status-open { color: var(--accent4); border-color: var(--accent4); }
+  .status-review { color: var(--accent2); border-color: var(--accent2); }
+  .status-approved { color: var(--accent3); border-color: var(--accent3); }
+  .status-blocked { color: var(--accent5); border-color: var(--accent5); }
+  .status-pending { color: var(--text3); border-color: var(--text3); }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--text2);
+    width: 180px;
+    flex-shrink: 0;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--surface3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    animation: fillBar 1.2s ease forwards;
+  }
+
+  .progress-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Comment box */
+  .comment-box {
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .comment-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    resize: none;
+    min-height: 60px;
+  }
+
+  .comment-input::placeholder { color: var(--text3); }
+
+  .comment-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  .comment-tags { display: flex; gap: 6px; }
+
+  .comment-tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .comment-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  .comment-submit {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s;
+  }
+
+  .comment-submit:hover { opacity: 0.85; }
+
+  /* Comment thread */
+  .comment-thread { margin-top: 10px; }
+
+  .comment-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comment-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent6), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .comment-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .comment-meta { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: 'DM Mono', monospace; }
+
+  /* Phase cards */
+  .phase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  .phase-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .phase-card.p1::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .phase-card.p2::before { background: linear-gradient(90deg, var(--accent6), var(--accent)); }
+  .phase-card.p3::before { background: linear-gradient(90deg, var(--accent3), var(--accent2)); }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+
+  .phase-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .phase-items { display: flex; flex-direction: column; gap: 5px; }
+
+  .phase-item {
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .phase-item::before { content: '◆'; font-size: 6px; color: var(--accent2); flex-shrink: 0; margin-top: 4px; }
+
+  /* API module */
+  .api-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+  .api-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .api-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+
+  .api-endpoint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .api-method {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .method-get { background: rgba(6,182,212,0.15); color: var(--accent2); }
+  .method-post { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .method-put { background: rgba(245,158,11,0.15); color: var(--accent4); }
+
+  .api-path {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  /* Compliance grid */
+  .compliance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .compliance-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .compliance-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .compliance-items { display: flex; flex-direction: column; gap: 5px; }
+
+  .compliance-item {
+    font-size: 11px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .check { color: var(--accent3); }
+  .pending-check { color: var(--accent4); }
+
+  /* Readiness matrix */
+  .readiness-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+  .readiness-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  .readiness-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Hero banner */
+  .hero-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--surface2) 50%, #0f2340 100%);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-banner::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .hero-pill {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    color: var(--text2);
+  }
+
+  /* Version badge */
+  .version-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+  }
+
+  /* Analytics row */
+  .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  .metric-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .metric-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--accent3);
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; }
+
+  .data-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .data-table td {
+    padding: 11px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface3); }
+
+  /* Notification */
+  .notification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--accent3);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--accent3);
+    z-index: 999;
+    display: none;
+    font-family: 'DM Mono', monospace;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  /* Divider */
+  hr.section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* Scroll hidden */
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+  .editable-field {
+    background: transparent;
+    border: 1px dashed transparent;
+    border-radius: 6px;
+    padding: 2px 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 80px;
+  }
+
+  .editable-field:focus { border-color: var(--accent); background: var(--surface3); }
+
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-260px); }
+    #main { margin-left: 0; }
+    .phase-grid, .compliance-grid { grid-template-columns: 1fr; }
+    .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+    .api-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🏦</div>
+      <div>
+        <div class="sidebar-logo-text">IPPB Aarogya</div>
+        <div class="sidebar-logo-sub">HSA Ecosystem</div>
+      </div>
+    </div>
+    <div class="sidebar-readiness">
+      <div class="readiness-label">Development Ready</div>
+      <div class="readiness-value">87%</div>
+      <div class="readiness-bar"><div class="readiness-fill"></div></div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" href="#exec-summary"><span class="nav-icon">📋</span>Executive Summary</a>
+    <a class="nav-item" href="#dashboard-metrics"><span class="nav-icon">📊</span>Dashboard Metrics</a>
+
+    <div class="nav-section-label">Stakeholders</div>
+    <a class="nav-item" href="#stakeholders"><span class="nav-icon">🤝</span>Core Stakeholders</a>
+    <a class="nav-item" href="#stakeholders"><span class="nav-icon">🏢</span>Employers <span class="nav-badge amber">Future</span></a>
+    <a class="nav-item" href="#stakeholders"><span class="nav-icon">🏥</span>Insurance <span class="nav-badge amber">Future</span></a>
+
+    <div class="nav-section-label">Functional Segments</div>
+    <a class="nav-item" href="#segments"><span class="nav-icon">👤</span>User Onboarding</a>
+    <a class="nav-item" href="#segments"><span class="nav-icon">💳</span>Funding Layer</a>
+    <a class="nav-item" href="#segments"><span class="nav-icon">🏥</span>Healthcare Access</a>
+    <a class="nav-item" href="#segments"><span class="nav-icon">🔒</span>Payment Governance</a>
+    <a class="nav-item" href="#segments"><span class="nav-icon">📈</span>Care Adherence</a>
+    <a class="nav-item" href="#segments"><span class="nav-icon">📉</span>Analytics</a>
+
+    <div class="nav-section-label">Technical</div>
+    <a class="nav-item" href="#tech-modules"><span class="nav-icon">⚙️</span>Banking APIs</a>
+    <a class="nav-item" href="#tech-modules"><span class="nav-icon">🔗</span>ABDM Integration</a>
+    <a class="nav-item" href="#tech-modules"><span class="nav-icon">🌐</span>Patient Portal APIs</a>
+    <a class="nav-item" href="#tech-modules"><span class="nav-icon">🏭</span>Employer Dashboard</a>
+
+    <div class="nav-section-label">Compliance & Roadmap</div>
+    <a class="nav-item" href="#compliance"><span class="nav-icon">⚖️</span>Compliance</a>
+    <a class="nav-item" href="#mvp"><span class="nav-icon">🚀</span>MVP Roadmap</a>
+    <a class="nav-item" href="#readiness"><span class="nav-icon">✅</span>Final Readiness</a>
+    <a class="nav-item" href="#collaboration"><span class="nav-icon">💬</span>Collaboration <span class="nav-badge green">3</span></a>
+  </nav>
+</aside>
+
+<!-- Main -->
+<div id="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">IPPB Aarogya — Health Savings Account Strategic Proposal</div>
+    <span class="topbar-tag">v2.1.0</span>
+    <span class="topbar-tag">🔒 Draft</span>
+    <span class="status-pill status-review">In Review</span>
+    <button class="topbar-save" onclick="saveState()">💾 Save State</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Hero -->
+    <div class="hero-banner">
+      <div class="hero-tag">IPPB × Healthcare Finance</div>
+      <div class="hero-title">India's First Bank-Integrated<br>Healthcare Savings Infrastructure</div>
+      <div class="hero-sub">Transforming Aarogya Savings into a closed-loop healthcare spending ecosystem — combining banking, digital health, patient engagement, and corporate wellness.</div>
+      <div class="hero-pills">
+        <span class="hero-pill">🏦 IPPB Core</span>
+        <span class="hero-pill">🔗 ABDM Compliant</span>
+        <span class="hero-pill">🏥 Verified Providers</span>
+        <span class="hero-pill">🏢 Employer-Ready</span>
+        <span class="hero-pill">🔐 RBI / DPDP Compliant</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Metrics -->
+    <div class="section" id="dashboard-metrics">
+      <div class="section-header">
+        <span class="section-num">00</span>
+        <div class="section-title">Dashboard Metrics</div>
+      </div>
+      <div class="analytics-grid">
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent)">
+            <input class="editable-field" value="1.2M" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Users Onboarded</div>
+          <div class="metric-sub">↑ +18% MoM</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent2)">
+            <input class="editable-field" value="847K" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Active Health Wallets</div>
+          <div class="metric-sub">↑ +12% MoM</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent3)">
+            <input class="editable-field" value="₹340Cr" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Total Health Savings</div>
+          <div class="metric-sub">↑ +24% QoQ</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent4)">
+            <input class="editable-field" value="4,280" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Verified Providers</div>
+          <div class="metric-sub">↑ +340 this month</div>
+        </div>
+      </div>
+      <div class="analytics-grid" style="margin-top:12px;">
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent6)">
+            <input class="editable-field" value="₹12.4Cr" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Txn Volume (Daily)</div>
+          <div class="metric-sub">↑ Active growth</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:#f472b6">
+            <input class="editable-field" value="128" style="font-size:26px;font-family:'Playfair Display',serif;font-weight:900;">
+          </div>
+          <div class="metric-label">Employer Partners</div>
+          <div class="metric-sub">↑ +22 this quarter</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent3)">87%</div>
+          <div class="metric-label">Proposal Completion</div>
+          <div class="metric-sub">Target: 100% by Q3</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color:var(--accent2)">94%</div>
+          <div class="metric-label">Compliance Readiness</div>
+          <div class="metric-sub">Banking + Healthtech</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Executive Summary -->
+    <div class="section" id="exec-summary">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <div class="section-title">Executive Summary</div>
+        <div class="section-status">
+          <span class="status-pill status-approved">Approved</span>
+          <span class="version-badge">v2.1</span>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🏦</div>
+          <div class="card-value" style="font-size:18px;color:var(--accent)">Banking</div>
+          <div class="card-label">IPPB as healthcare financial infrastructure</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💊</div>
+          <div class="card-value" style="font-size:18px;color:var(--accent2)">Digital Health</div>
+          <div class="card-label">ABDM + ABHA integration layer</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏥</div>
+          <div class="card-value" style="font-size:18px;color:var(--accent3)">Providers</div>
+          <div class="card-label">Verified healthcare merchant network</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤝</div>
+          <div class="card-value" style="font-size:18px;color:var(--accent4)">Corporate</div>
+          <div class="card-label">Employer health allowance ecosystem</div>
+        </div>
+      </div>
+
+      <div class="accordion open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🎯</span> Vision & Core Objective
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Transform IPPB Aarogya Savings Account from a wellness-oriented savings product into a healthcare-focused financial infrastructure. Enable employer-funded healthcare allowances, restrict spending to verified providers, integrate with ABDM-certified patient portals, link ABHA identities to healthcare financing, and track treatment adherence through transaction history.</p>
+          <div class="workflow" style="margin-top:16px;">
+            <div class="workflow-step">Banking</div><div class="workflow-arrow">+</div>
+            <div class="workflow-step">Digital Health</div><div class="workflow-arrow">+</div>
+            <div class="workflow-step">Patient Engagement</div><div class="workflow-arrow">+</div>
+            <div class="workflow-step">Corporate Wellness</div><div class="workflow-arrow">=</div>
+            <div class="workflow-step" style="border-color:var(--accent);color:var(--accent);">Closed-Loop Ecosystem</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Stakeholders -->
+    <div class="section" id="stakeholders">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <div class="section-title">Core Stakeholders</div>
+        <div class="section-status"><span class="status-pill status-review">In Review</span></div>
+      </div>
+      <div class="stakeholder-grid">
+        <!-- IPPB -->
+        <div class="stakeholder-card">
+          <div class="stakeholder-header">
+            <div class="stakeholder-avatar" style="background:linear-gradient(135deg,#1e3a5f,var(--accent))">🏦</div>
+            <div>
+              <div class="stakeholder-name">India Post Payments Bank</div>
+              <div class="stakeholder-role">Account Provider · Fund Custodian · Issuer</div>
+            </div>
+          </div>
+          <div class="stakeholder-body">
+            <ul class="feature-list">
+              <li>Savings account creation & wallet infrastructure</li>
+              <li>Restricted healthcare spending controls</li>
+              <li>Employer healthcare allowance processing</li>
+              <li>Virtual/physical wellness card issuance</li>
+              <li>UPI & card integration layer</li>
+              <li>RBI-compliant payment authorization</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Users -->
+        <div class="stakeholder-card">
+          <div class="stakeholder-header">
+            <div class="stakeholder-avatar" style="background:linear-gradient(135deg,#064e3b,var(--accent3))">👤</div>
+            <div>
+              <div class="stakeholder-name">Users — Employees / Patients</div>
+              <div class="stakeholder-role">Account Holders · ABHA-Linked Beneficiaries</div>
+            </div>
+          </div>
+          <div class="stakeholder-body">
+            <ul class="feature-list">
+              <li>Aadhaar KYC + ABHA ID linkage</li>
+              <li>Health wallet access & card use</li>
+              <li>Prescription-linked & pharmacy payments</li>
+              <li>Appointment & diagnostics booking</li>
+              <li>Treatment adherence tracking</li>
+              <li>Longitudinal health spending history</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Healthcare Ecosystem -->
+        <div class="stakeholder-card">
+          <div class="stakeholder-header">
+            <div class="stakeholder-avatar" style="background:linear-gradient(135deg,#4c1d95,var(--accent6))">🏥</div>
+            <div>
+              <div class="stakeholder-name">Healthcare Ecosystem</div>
+              <div class="stakeholder-role">Providers · Portals · Labs · Pharmacies</div>
+            </div>
+          </div>
+          <div class="stakeholder-body">
+            <ul class="feature-list">
+              <li>ABDM-verified provider onboarding</li>
+              <li>HFR-registered facility network</li>
+              <li>Prescription verification & care confirmation</li>
+              <li>Portal integration APIs</li>
+              <li>Health records generation & submission</li>
+              <li>Care adherence confirmation signals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>🔮</span> Future Stakeholders (Phase 2–3)
+            <span class="accordion-arrow">▶</span>
+          </div>
+          <div class="accordion-body">
+            <div class="stakeholder-grid" style="margin-top:12px;">
+              <div class="stakeholder-card">
+                <div class="stakeholder-header">
+                  <div class="stakeholder-avatar" style="background:linear-gradient(135deg,#78350f,var(--accent4))">🏢</div>
+                  <div>
+                    <div class="stakeholder-name">Employers</div>
+                    <div class="stakeholder-role">Corporate Health Benefit Sponsors</div>
+                  </div>
+                </div>
+                <div class="stakeholder-body">
+                  <ul class="feature-list">
+                    <li>Fund employee health accounts via payroll</li>
+                    <li>Monitor healthcare utilization</li>
+                    <li>Set wellness incentive programs</li>
+                    <li>HR dashboard & benefit analytics</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="stakeholder-card">
+                <div class="stakeholder-header">
+                  <div class="stakeholder-avatar" style="background:linear-gradient(135deg,#7f1d1d,var(--accent5))">📋</div>
+                  <div>
+                    <div class="stakeholder-name">Insurance Companies</div>
+                    <div class="stakeholder-role">Claims & Risk Partners</div>
+                  </div>
+                </div>
+                <div class="stakeholder-body">
+                  <ul class="feature-list">
+                    <li>Claims validation via transaction data</li>
+                    <li>Underwriting & risk scoring support</li>
+                    <li>Preventive care incentive design</li>
+                    <li>Health intelligence integration</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Functional Segments -->
+    <div class="section" id="segments">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <div class="section-title">Functional Segments</div>
+        <div class="section-status"><span class="status-pill status-review">In Review</span></div>
+      </div>
+
+      <div class="accordion open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>👤</span> Segment 1: User Onboarding
+          <span class="status-pill status-approved" style="margin-left:8px;">Approved</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>User registration, Aadhaar/KYC verification, ABHA ID linkage, corporate employee enrollment, wallet activation, savings account creation, health card issuance, and consent management.</p>
+          <div class="workflow">
+            <div class="workflow-step">User</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">KYC</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">ABHA Link</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">IPPB Account</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Health Wallet</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step" style="border-color:var(--accent3);color:var(--accent3);">Portal Access</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>💰</span> Segment 2: Funding Layer
+          <span class="status-pill status-review" style="margin-left:8px;">In Review</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Employer health allowance deposits, user personal savings, government healthcare benefits, incentive top-ups, wallet recharge, and payroll integrations.</p>
+          <div class="workflow">
+            <div class="workflow-step">Employer/Source</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">IPPB Wallet</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step" style="border-color:var(--accent3);color:var(--accent3);">Restricted Health Balance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🏥</span> Segment 3: Healthcare Access Layer
+          <span class="status-pill status-open" style="margin-left:8px;">Open</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Portal login, provider discovery, HFR-verified provider lookup, appointment scheduling, prescription management, diagnostics booking, pharmacy orders, and payment authorization.</p>
+          <div class="workflow">
+            <div class="workflow-step">User</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Patient Portal</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Verified Provider</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Payment Request</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step" style="border-color:var(--accent);color:var(--accent);">IPPB Authorization</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>🔒</span> Segment 4: Payment Governance
+          <span class="status-pill status-approved" style="margin-left:8px;">Approved</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Merchant category restriction, ABDM HFR provider verification, provider whitelist, fraud prevention, real-time transaction validation, and closed-loop healthcare spending controls.</p>
+          <div class="workflow">
+            <div class="workflow-step">Transaction Attempt</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Provider Validation</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Wallet Authorization</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step" style="border-color:var(--accent3);color:var(--accent3);">Approved / Denied</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📋</span> Segment 5: Care Adherence Tracking
+          <span class="status-pill status-open" style="margin-left:8px;">Open</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Prescription fulfillment validation, lab completion tracking, follow-up adherence, medication compliance scoring, treatment history, and longitudinal patient spending records.</p>
+          <div class="workflow">
+            <div class="workflow-step">Payment + Provider Service</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step">Health Record</div><div class="workflow-arrow">→</div>
+            <div class="workflow-step" style="border-color:var(--accent2);color:var(--accent2);">Adherence Tracking</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>📊</span> Segment 6: Reporting & Analytics
+          <span class="status-pill status-pending" style="margin-left:8px;">Pending</span>
+          <span class="accordion-arrow">▶</span>
+        </div>
+        <div class="accordion-body">
+          <p>Employer dashboard, user healthcare spending dashboard, banking analytics, compliance reports, provider utilization, treatment adherence scoring, and insurance support analytics.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Technical Modules -->
+    <div class="section" id="tech-modules">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <div class="section-title">Technical Product Modules</div>
+        <div class="section-status"><span class="status-pill status-review">In Review</span></div>
+      </div>
+
+      <div class="api-grid">
+        <!-- Banking APIs -->
+        <div class="api-card">
+          <div class="api-card-title">Module A — Banking APIs</div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/accounts/create</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/wallet/balance</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/wallet/fund-allocation</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/employer/topup</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/transactions/history</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/cards/issue</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/payments/authorize</span></div>
+          <div class="api-endpoint"><span class="api-method method-put">PUT</span><span class="api-path">/upi/controls</span></div>
+        </div>
+        <!-- ABDM APIs -->
+        <div class="api-card">
+          <div class="api-card-title">Module B — ABDM Integration</div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/abdm/abha/link</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/abdm/hfr/verify</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/abdm/consent/request</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/abdm/hiu/records</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/abdm/hip/submit</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/abdm/providers/search</span></div>
+        </div>
+        <!-- Portal APIs -->
+        <div class="api-card">
+          <div class="api-card-title">Module C — Patient Portal APIs</div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/portal/auth/token</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/portal/wallet/status</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/portal/providers/lookup</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/portal/appointments/pay</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/portal/prescriptions/checkout</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/portal/pharmacy/order</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/portal/adherence/insights</span></div>
+        </div>
+        <!-- Employer APIs -->
+        <div class="api-card">
+          <div class="api-card-title">Module D — Employer Dashboard APIs</div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/employer/employees/enroll</span></div>
+          <div class="api-endpoint"><span class="api-method method-post">POST</span><span class="api-path">/employer/benefits/allocate</span></div>
+          <div class="api-endpoint"><span class="api-method method-put">PUT</span><span class="api-path">/employer/payroll/sync</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/employer/reports/utilization</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/employer/analytics/spending</span></div>
+          <div class="api-endpoint"><span class="api-method method-get">GET</span><span class="api-path">/employer/metrics/wellness</span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Compliance -->
+    <div class="section" id="compliance">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <div class="section-title">Compliance Requirements</div>
+        <div class="section-status"><span class="status-pill status-approved">Approved</span></div>
+      </div>
+
+      <div class="compliance-grid">
+        <div class="compliance-card">
+          <div class="compliance-title">🏦 Banking Compliance</div>
+          <div class="compliance-items">
+            <div class="compliance-item"><span class="check">✓</span> RBI Wallet Compliance</div>
+            <div class="compliance-item"><span class="check">✓</span> KYC / AML Norms</div>
+            <div class="compliance-item"><span class="check">✓</span> Payment Regulations</div>
+            <div class="compliance-item"><span class="check">✓</span> PCI DSS</div>
+            <div class="compliance-item"><span class="check">✓</span> NPCI / UPI Guidelines</div>
+          </div>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-title">💊 Healthtech Compliance</div>
+          <div class="compliance-items">
+            <div class="compliance-item"><span class="check">✓</span> ABDM Framework</div>
+            <div class="compliance-item"><span class="check">✓</span> ABHA Data Consent</div>
+            <div class="compliance-item"><span class="check">✓</span> DPDP Act 2023</div>
+            <div class="compliance-item"><span class="check">✓</span> Health Record Privacy</div>
+            <div class="compliance-item"><span class="pending-check">◷</span> HFR Verification SLA</div>
+          </div>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-title">🔮 Future Compliance</div>
+          <div class="compliance-items">
+            <div class="compliance-item"><span class="pending-check">◷</span> Insurance Interoperability</div>
+            <div class="compliance-item"><span class="pending-check">◷</span> Credit Line Regulations</div>
+            <div class="compliance-item"><span class="pending-check">◷</span> IRDAI Health Data Rules</div>
+            <div class="compliance-item"><span class="pending-check">◷</span> NHA Partnership MoU</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div class="progress-row">
+          <div class="progress-label">Banking Compliance</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:95%;background:linear-gradient(90deg,var(--accent3),var(--accent2))"></div></div>
+          <div class="progress-pct">95%</div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label">Healthtech Compliance</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:88%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div>
+          <div class="progress-pct">88%</div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label">Data Privacy (DPDP)</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:91%;background:linear-gradient(90deg,var(--accent6),var(--accent))"></div></div>
+          <div class="progress-pct">91%</div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label">Future Insurance/Credit</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:40%;background:linear-gradient(90deg,var(--accent4),var(--accent5))"></div></div>
+          <div class="progress-pct">40%</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- MVP Roadmap -->
+    <div class="section" id="mvp">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <div class="section-title">MVP Roadmap</div>
+        <div class="section-status"><span class="status-pill status-approved">Approved</span></div>
+      </div>
+
+      <div class="phase-grid">
+        <div class="phase-card p1">
+          <div class="phase-num">Phase 1 — MVP</div>
+          <div class="phase-title">Foundation Layer</div>
+          <div class="phase-items">
+            <div class="phase-item">IPPB wallet integration</div>
+            <div class="phase-item">Aarogya account upgrade</div>
+            <div class="phase-item">Employer allowance support</div>
+            <div class="phase-item">Restricted healthcare spending</div>
+            <div class="phase-item">ABHA linkage</div>
+            <div class="phase-item">Basic portal integration</div>
+            <div class="phase-item">Verified provider payments</div>
+            <div class="phase-item">Core reporting dashboard</div>
+          </div>
+        </div>
+        <div class="phase-card p2">
+          <div class="phase-num">Phase 2 — Growth</div>
+          <div class="phase-title">Intelligence Layer</div>
+          <div class="phase-items">
+            <div class="phase-item">Health credit line</div>
+            <div class="phase-item">Insurance integrations</div>
+            <div class="phase-item">Multi-employer support</div>
+            <div class="phase-item">Analytics engine</div>
+            <div class="phase-item">Predictive health insights</div>
+            <div class="phase-item">Advanced adherence tracking</div>
+          </div>
+        </div>
+        <div class="phase-card p3">
+          <div class="phase-num">Phase 3 — Scale</div>
+          <div class="phase-title">National Ecosystem</div>
+          <div class="phase-items">
+            <div class="phase-item">National health-fintech platform</div>
+            <div class="phase-item">Government healthcare integrations</div>
+            <div class="phase-item">Multi-portal APIs</div>
+            <div class="phase-item">Embedded insurance services</div>
+            <div class="phase-item">Population health analytics</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Readiness -->
+    <div class="section" id="readiness">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <div class="section-title">Final Readiness Framework</div>
+        <div class="section-status"><span class="status-pill status-review">In Review</span></div>
+      </div>
+
+      <div class="readiness-grid">
+        <div class="readiness-card">
+          <div class="readiness-card-title">📈 Business Readiness</div>
+          <div class="progress-row">
+            <div class="progress-label">Market Validation</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:90%;background:linear-gradient(90deg,var(--accent3),var(--accent2))"></div></div>
+            <div class="progress-pct">90%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Employer Interest</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:85%;background:linear-gradient(90deg,var(--accent3),var(--accent2))"></div></div>
+            <div class="progress-pct">85%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Banking Feasibility</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:92%;background:linear-gradient(90deg,var(--accent3),var(--accent2))"></div></div>
+            <div class="progress-pct">92%</div>
+          </div>
+        </div>
+        <div class="readiness-card">
+          <div class="readiness-card-title">⚙️ Technical Readiness</div>
+          <div class="progress-row">
+            <div class="progress-label">API Validation</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:83%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+            <div class="progress-pct">83%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Portal Integration</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:76%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+            <div class="progress-pct">76%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Security Architecture</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:94%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+            <div class="progress-pct">94%</div>
+          </div>
+        </div>
+        <div class="readiness-card">
+          <div class="readiness-card-title">⚖️ Compliance Readiness</div>
+          <div class="progress-row">
+            <div class="progress-label">Banking Regulations</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:95%;background:linear-gradient(90deg,var(--accent6),var(--accent))"></div></div>
+            <div class="progress-pct">95%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Healthtech Rules</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:88%;background:linear-gradient(90deg,var(--accent6),var(--accent))"></div></div>
+            <div class="progress-pct">88%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Privacy (DPDP)</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:91%;background:linear-gradient(90deg,var(--accent6),var(--accent))"></div></div>
+            <div class="progress-pct">91%</div>
+          </div>
+        </div>
+        <div class="readiness-card">
+          <div class="readiness-card-title">🚀 Deployment Readiness</div>
+          <div class="progress-row">
+            <div class="progress-label">UI/UX Complete</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:80%;background:linear-gradient(90deg,var(--accent4),var(--accent3))"></div></div>
+            <div class="progress-pct">80%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Dev Scope Finalized</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:88%;background:linear-gradient(90deg,var(--accent4),var(--accent3))"></div></div>
+            <div class="progress-pct">88%</div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Pilot Partners</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:72%;background:linear-gradient(90deg,var(--accent4),var(--accent3))"></div></div>
+            <div class="progress-pct">72%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final readiness bar -->
+      <div style="background:var(--surface2);border:1px solid var(--border-strong);border-radius:14px;padding:24px 28px;margin-top:20px;display:flex;align-items:center;gap:24px;">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Overall Development Readiness</div>
+          <div style="font-family:'Playfair Display',serif;font-size:42px;font-weight:900;color:var(--accent3);line-height:1;">87%</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">Target: 100% by Q3 2025</div>
+        </div>
+        <div style="flex:1;">
+          <div style="height:12px;background:var(--surface3);border-radius:6px;overflow:hidden;">
+            <div style="height:100%;width:87%;background:linear-gradient(90deg,var(--accent3),var(--accent2));border-radius:6px;animation:fillBar 1.5s ease forwards;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">
+            <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Stakeholder Review / Collaboration -->
+    <div class="section" id="collaboration">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <div class="section-title">Stakeholder Review & Collaboration</div>
+        <div class="section-status"><span class="status-pill status-open">Open</span></div>
+      </div>
+
+      <!-- Pending items table -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:18px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Section</th>
+              <th>Owner</th>
+              <th>Status</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>HFR Provider Verification SLA</td>
+              <td>Healthtech Compliance</td>
+              <td>Tech Lead</td>
+              <td><span class="status-pill status-open">Open</span></td>
+              <td><input class="editable-field" value="2025-08-15" style="width:100px;"></td>
+            </tr>
+            <tr>
+              <td>Portal Integration APIs — Finalise</td>
+              <td>Module C</td>
+              <td>Dev Team</td>
+              <td><span class="status-pill status-review">In Review</span></td>
+              <td><input class="editable-field" value="2025-09-01" style="width:100px;"></td>
+            </tr>
+            <tr>
+              <td>Pilot Employer Confirmations</td>
+              <td>Deployment Readiness</td>
+              <td>BD Team</td>
+              <td><span class="status-pill status-pending">Pending</span></td>
+              <td><input class="editable-field" value="2025-09-15" style="width:100px;"></td>
+            </tr>
+            <tr>
+              <td>Insurance Interoperability Framework</td>
+              <td>Future Compliance</td>
+              <td>Legal</td>
+              <td><span class="status-pill status-blocked">Blocked</span></td>
+              <td><input class="editable-field" value="2025-Q4" style="width:100px;"></td>
+            </tr>
+            <tr>
+              <td>Analytics Segment 6 — Architecture</td>
+              <td>Functional Segments</td>
+              <td>Data Team</td>
+              <td><span class="status-pill status-pending">Pending</span></td>
+              <td><input class="editable-field" value="2025-10-01" style="width:100px;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Comment panel -->
+      <div class="comment-box">
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;">💬 Add Comment / Suggestion</div>
+        <textarea class="comment-input" id="commentInput" placeholder="Add a comment, flag an issue, or suggest a change... Use @mention to tag stakeholders."></textarea>
+        <div class="comment-footer">
+          <div class="comment-tags">
+            <span class="comment-tag" onclick="tagComment('@IPPB')">@IPPB</span>
+            <span class="comment-tag" onclick="tagComment('@Tech')">@Tech</span>
+            <span class="comment-tag" onclick="tagComment('@Legal')">@Legal</span>
+            <span class="comment-tag" onclick="tagComment('@BD')">@BD</span>
+            <span class="comment-tag" onclick="tagComment('#Compliance')">🚩 Flag</span>
+          </div>
+          <button class="comment-submit" onclick="submitComment()">Post Comment</button>
+        </div>
+      </div>
+
+      <!-- Comment thread -->
+      <div class="comment-thread" id="commentThread">
+        <div class="comment-item">
+          <div class="comment-avatar">RK</div>
+          <div>
+            <div class="comment-text">@Tech — Need clarity on the ABDM HIU consent flow for multi-portal environments. Can we schedule a technical review?</div>
+            <div class="comment-meta">Rajesh K · Product Lead · 2 days ago · Section: Module B</div>
+          </div>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,var(--accent3),var(--accent2))">AS</div>
+          <div>
+            <div class="comment-text">@Legal — The DPDP Act data retention clause needs explicit acknowledgment in the employer dashboard terms. Flagging for legal review before MVP.</div>
+            <div class="comment-meta">Anjali S · Compliance Officer · 4 days ago · Section: Compliance</div>
+          </div>
+        </div>
+        <div class="comment-item">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,var(--accent4),#b45309)">MP</div>
+          <div>
+            <div class="comment-text">Pilot employer confirmations from 3 corporates received. BD team to update the readiness percentage once paperwork is signed.</div>
+            <div class="comment-meta">Manish P · BD Head · 1 week ago · Section: Deployment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:60px;"></div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification">✓ State saved successfully</div>
+
+<script>
+  function toggleAccordion(header) {
+    const acc = header.closest('.accordion');
+    acc.classList.toggle('open');
+  }
+
+  function saveState() {
+    const notif = document.getElementById('notification');
+    notif.style.display = 'block';
+    setTimeout(() => notif.style.display = 'none', 2500);
+    // Save editable fields to localStorage
+    const fields = document.querySelectorAll('.editable-field');
+    const data = {};
+    fields.forEach((f, i) => data[i] = f.value);
+    try { localStorage.setItem('ippb_hsa_state', JSON.stringify(data)); } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const data = JSON.parse(localStorage.getItem('ippb_hsa_state') || '{}');
+      const fields = document.querySelectorAll('.editable-field');
+      fields.forEach((f, i) => { if (data[i] !== undefined) f.value = data[i]; });
+    } catch(e) {}
+  }
+
+  function tagComment(tag) {
+    const inp = document.getElementById('commentInput');
+    inp.value += (inp.value ? ' ' : '') + tag + ' ';
+    inp.focus();
+  }
+
+  function submitComment() {
+    const inp = document.getElementById('commentInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    const thread = document.getElementById('commentThread');
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML = `
+      <div class="comment-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent6))">YO</div>
+      <div>
+        <div class="comment-text">${text}</div>
+        <div class="comment-meta">You · Just now · This Section</div>
+      </div>`;
+    thread.insertBefore(item, thread.firstChild);
+    inp.value = '';
+  }
+
+  // Active nav on scroll
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', function() {
+      navItems.forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  loadState();
+</script>
+</body>
+</html>
